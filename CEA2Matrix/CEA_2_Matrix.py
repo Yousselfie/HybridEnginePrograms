@@ -1,6 +1,6 @@
 import csv
 
-file = "tab_data.txt"
+file = "tab_data_5exits_5OFs.txt"
 f = open(file, 'r')
 lines = f.readlines() #gets all lines of the file in a list
 m = len(lines) #number of lines of raw output in the file
@@ -43,9 +43,20 @@ def get_Rows():
         rows.append(temp_arr)  #append the nth row array to rows
     return rows
 
+def corrected_Rows(): #accounts for 
+    final_rows = []
+    start = 0 #start will increase with each increment of row
+    for row in get_Rows():
+        temp_arr = []
+        for col in range(start, len(row), n):
+            temp_arr.append(row[col])
+        start += 1
+        final_rows.append(temp_arr)
+    return final_rows
+
 def get_Column_Headers(): #OF0, OF1, OF2,...
     headers = []
-    for i in range(len(get_Columns())): #because number of OFs = number of columns
+    for i in range(len(corrected_Rows()[0])): #because number of OFs = number of columns
         headers.append(f'O/F{i}')
     return headers
 
@@ -53,13 +64,14 @@ def create_csv():
     with open('CEA_Matrix.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(get_Column_Headers()) #writes column headers first
-        for row in get_Rows():
+        for row in corrected_Rows():
             writer.writerow(row) #writes every row found in get_Rows()
     print("CSV created.")
 
 def create_xlsx():
     pass
 
+print(corrected_Rows())
 create_csv()
 
 
